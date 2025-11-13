@@ -1,0 +1,28 @@
+[project]
+name = "rugby-xpoints"
+version = "0.1.0"
+description = "Analyse des buteurs de rugby dans le contexte de pénalités et de transformations. Création de la grandeur \"xPoints\" qui représente les expected points (points espérés) d'un coup de pied. Cela permet de comparer la difficulté des tentatives et de comparer le niveau des buteurs."
+authors = [
+    {name = "Marius Pascal", email = "marius.pascal2b@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas (>=2.3.3,<3.0.0)",
+    "numpy (>=2.3.4,<3.0.0)",
+    "scikit-learn (>=1.7.2,<2.0.0)",
+    "matplotlib (>=3.10.7,<4.0.0)"
+]
+
+[project.scripts]
+calcul_proba = "code.calcul_proba:main"
+repertoire = "code.repertoireV3:main"
+stats_joueurs = "code.stats_joueurs:main"
+
+
+[project.urls]
+repository = "https://github.com/mariuspascal1/rugby-xpoints"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
