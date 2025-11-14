@@ -47,7 +47,7 @@ def calculer_distance(xA, yA, xB, yB, x, y):
 
 # Charger et entraîner le modèle de régression logistique
 def charger_modele():
-    data = pd.read_csv('repertoire.csv') 
+    data = pd.read_csv('data/repertoire.csv') 
     data['resultat'] = data['resultat'].map({'réussi': 1, 'raté': 0})
     X = data[['angle', 'distance']]
     y = data['resultat']
@@ -66,7 +66,7 @@ def coups_joueurs(journee, competition):
     model = charger_modele()
 
     # Charger les données à partir du fichier CSV avec le bon séparateur
-    data = pd.read_csv('repertoire.csv')  # Spécifier le séparateur
+    data = pd.read_csv('data/repertoire.csv')  # Spécifier le séparateur
     print(data.columns)  # Imprimer les colonnes pour vérification
 
     # Filtrer les données pour n'inclure que celles de la compétition et de la journée
@@ -96,10 +96,10 @@ def coups_joueurs(journee, competition):
     data_copy.loc[:, 'xPoints'] = np.where(data_copy['type'] == 'transformation', data_copy['proba'] * 2, data_copy['proba'] * 3)
 
     # Créer un dossier pour sauvegarder les fichiers, si nécessaire
-    dossier = f'coups_joueurs_{str(competition)}_{str(journee)}'
+    dossier = f'data/coups_joueurs_{str(competition)}_{str(journee)}'
 
     # Sauvegarder les données mises à jour dans le fichier coups_joueurs{n}.csv
-    nom_fichier = f'coups_joueurs_{str(competition)}_{str(journee)}.csv'
+    nom_fichier = f'data/coups_joueurs_{str(competition)}_{str(journee)}.csv'
     data_copy.to_csv(nom_fichier, index=False)
     print(f"Données pour la compétition {competition} et la journée {journee} sauvegardées dans {nom_fichier} avec les colonnes proba et xPoints.")
 

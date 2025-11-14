@@ -27,7 +27,7 @@ def get_user_input():
 
 def creer_stats_joueurs(journee, competition):
     # Charger les données à partir du fichier coups_joueurs{n}.csv
-    nom_fichier = f'coups_joueurs_{competition}_{journee}.csv'
+    nom_fichier = f'data/coups_joueurs_{competition}_{journee}.csv'
     data = pd.read_csv(nom_fichier)
 
     # Créer des colonnes temporaires pour les calculs
