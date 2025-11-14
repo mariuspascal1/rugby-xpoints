@@ -107,10 +107,12 @@ def coups_joueurs(journee, competition):
 
 
 
-if __name__ == "__main__":
+def main():
     competition, journee = get_user_input()
     coups_joueurs(journee, competition)
    
+if __name__ == "__main__":
+    main()
 
 """import pandas as pd
 import numpy as np

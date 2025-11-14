@@ -124,8 +124,13 @@ def sauvegarder_coups(fichier_sauvegarde):
 
     print(f"Les données ont été sauvegardées dans {fichier_sauvegarde}")
 
+
+def main():
+    start_interface() 
+
 if __name__ == "__main__":
-    start_interface()
+    main()
+
 
 """import pandas as pd
 import math

@@ -118,13 +118,15 @@ def creer_stats_competition(competition):
     stats_global.to_csv(f'stats_joueurs_{competition}.csv', index=False)
     print(f"Statistiques globales sauvegardées dans stats_joueurs_{competition}.csv.")
 
-
-if __name__ == "__main__":
+def main():
     competition, journee = get_user_input()
     if journee is None: #0 pour faire les stats de toute la compétition
         creer_stats_competition(competition)
     else:
         creer_stats_joueurs(journee, competition)
+
+if __name__ == "__main__":
+    main()
 
 
 """import pandas as pd
