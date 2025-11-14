@@ -95,7 +95,7 @@ def gérer_terrain(image_path, nom_joueur, nom_equipe, competition, journee, typ
         plt.draw()
 
         # Sauvegarder immédiatement après chaque clic
-        sauvegarder_coups("repertoire.csv")
+        sauvegarder_coups("data/repertoire.csv")
 
         print(f"Coup de pied {resultat} ajouté : {x}, {y}, Angle: {angle:.2f}°, Distance: {distance:.2f}")
 
