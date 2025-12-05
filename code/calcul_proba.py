@@ -1,200 +1,177 @@
 import pandas as pd
 import numpy as np
 import math
+import logging
 from sklearn.linear_model import LogisticRegression
 import tkinter as tk
 from tkinter import simpledialog
 
+# ---------- CONFIGURATION DU LOGGING ----------
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,  # Change en DEBUG si tu veux plus de détails
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+)
+
+
+# ---------- INTERACTION UTILISATEUR ----------
 def get_user_input():
+    logger.info("Ouverture de la fenêtre de saisie utilisateur.")
+
     root = tk.Tk()
-    root.withdraw()  # Cacher la fenêtre principale
+    root.withdraw()
 
     competition = simpledialog.askstring("Entrée utilisateur", "Compétition :")
-    
-    # Demander la journée en tant que chaîne
-    journee_str = simpledialog.askstring("Entrée utilisateur", "Journée (laisser vide pour toute la compétition) :")
-    
-    # Si l'utilisateur entre une valeur vide, mettre journee à None
+    logger.debug(f"Compétition saisie : {competition}")
+
+    journee_str = simpledialog.askstring(
+        "Entrée utilisateur", "Journée (laisser vide pour toute la compétition) :"
+    )
+
     if journee_str == "":
         journee = None
+        logger.info(
+            "Aucune journée sélectionnée : traitement pour toute la compétition."
+        )
     else:
-        # Sinon, convertir la chaîne en entier
         try:
             journee = int(journee_str)
+            logger.debug(f"Journée saisie : {journee}")
         except ValueError:
+            logger.warning(f"Valeur invalide entrée pour la journée : {journee_str}")
             journee = None
-    
+
     return competition, journee
 
-# Calculer l'angle entre les poteaux
+
+# ---------- CALCUL DES ANGLES & DISTANCES ----------
 def calculer_angle(xA, yA, xB, yB, x, y):
-    dA = math.sqrt((xA - x) ** 2 + (yA - y) ** 2)
-    dB = math.sqrt((xB - x) ** 2 + (yB - y) ** 2)
-    dAB = math.sqrt((xB - xA) ** 2 + (yB - yA) ** 2)
-    
-    cos_theta = (dA ** 2 + dB ** 2 - dAB ** 2) / (2 * dA * dB)
-    theta = math.acos(cos_theta)
-    theta_degrees = math.degrees(theta)
-    
-    return theta_degrees
+    try:
+        dA = math.sqrt((xA - x) ** 2 + (yA - y) ** 2)
+        dB = math.sqrt((xB - x) ** 2 + (yB - y) ** 2)
+        dAB = math.sqrt((xB - xA) ** 2 + (yB - yA) ** 2)
 
-# Calculer la distance au milieu entre les poteaux
+        cos_theta = (dA**2 + dB**2 - dAB**2) / (2 * dA * dB)
+        theta = math.acos(cos_theta)
+        angle = math.degrees(theta)
+
+        logger.debug(f"Angle calculé : {angle:.2f}°")
+        return angle
+
+    except Exception as e:
+        logger.critical(f"Erreur lors du calcul d'angle : {e}")
+        raise
+
+
 def calculer_distance(xA, yA, xB, yB, x, y):
-    milieu_A_B = ((xA + xB) / 2, (yA + yB) / 2)
-    return math.sqrt((milieu_A_B[0] - x) ** 2 + (milieu_A_B[1] - y) ** 2)
+    try:
+        milieu_A_B = ((xA + xB) / 2, (yA + yB) / 2)
+        distance = math.sqrt((milieu_A_B[0] - x) ** 2 + (milieu_A_B[1] - y) ** 2)
 
-# Charger et entraîner le modèle de régression logistique
+        logger.debug(f"Distance calculée : {distance:.2f}")
+        return distance
+
+    except Exception as e:
+        logger.critical(f"Erreur lors du calcul de distance : {e}")
+        raise
+
+
+# ---------- CHARGEMENT DU MODÈLE ----------
 def charger_modele():
-    data = pd.read_csv('data/repertoire.csv') 
-    data['resultat'] = data['resultat'].map({'réussi': 1, 'raté': 0})
-    X = data[['angle', 'distance']]
-    y = data['resultat']
+    logger.info("Chargement du fichier repertoire.csv...")
+
+    try:
+        data = pd.read_csv("data/repertoire.csv")
+    except FileNotFoundError:
+        logger.error("Fichier data/repertoire.csv introuvable !")
+        raise
+
+    logger.info("Données chargées. Entraînement du modèle...")
+    logger.debug(f"Colonnes disponibles : {list(data.columns)}")
+
+    data["resultat"] = data["resultat"].map({"réussi": 1, "raté": 0})
+    X = data[["angle", "distance"]]
+    y = data["resultat"]
+
     model = LogisticRegression()
     model.fit(X, y)
+
+    logger.info("Modèle de régression logistique entraîné avec succès.")
     return model
 
-# Calculer la probabilité de réussite pour une entrée spécifique
-def probabilite_reussite(model, angle, distance):
-    prob = model.predict_proba([[angle, distance]])[0][1]
-    return prob
 
-# Fonction principale pour traiter les données de la journée n
+# ---------- CALCUL DE LA PROBABILITÉ ----------
+def probabilite_reussite(model, angle, distance):
+    try:
+        prob = model.predict_proba([[angle, distance]])[0][1]
+        logger.debug(f"Probabilité calculée : {prob:.4f}")
+        return prob
+    except Exception as e:
+        logger.error(f"Erreur lors du calcul de probabilité : {e}")
+        raise
+
+
+# ---------- PIPELINE PRINCIPAL ----------
 def coups_joueurs(journee, competition):
-    # Charger le modèle
+    logger.info(
+        f"Début du traitement pour compétition={competition}, journée={journee}"
+    )
+
     model = charger_modele()
 
-    # Charger les données à partir du fichier CSV avec le bon séparateur
-    data = pd.read_csv('data/repertoire.csv')  # Spécifier le séparateur
-    print(data.columns)  # Imprimer les colonnes pour vérification
-
-    # Filtrer les données pour n'inclure que celles de la compétition et de la journée
-    if journee is None:
-        # Si journee est None, on ne filtre pas sur la journée, on prend toutes les journées de la compétition
-        data_copy = data[data['competition'] == competition].copy()  # Crée une copie pour éviter les avertissements
-    else:
-        # Sinon, on filtre à la fois sur la compétition et la journée
-        data_copy = data[(data['competition'] == competition) & (data['journee'] == journee)].copy()
-
-    # Si aucune donnée n'est trouvée
-    if data_copy.empty:
-        print(f"Aucune donnée trouvée pour la compétition {competition} et la journée {journee}.")
+    try:
+        data = pd.read_csv("data/repertoire.csv")
+    except FileNotFoundError:
+        logger.error("Impossible de charger repertoire.csv dans data/")
         return
 
-    # Coordonnées des poteaux
-    xA, yA, xB, yB = 7.556818181818187, 29.77272727272728, 7.651515151515156, 39.90530303030304
+    # Filtrage
+    if journee is None:
+        data_copy = data[data["competition"] == competition].copy()
+        logger.info("Traitement sur l'ensemble de la compétition.")
+    else:
+        data_copy = data[
+            (data["competition"] == competition) & (data["journee"] == journee)
+        ].copy()
+        logger.info(f"Traitement pour la journée {journee}.")
 
-    # Calculer les angles et distances pour chaque coup
-    data_copy.loc[:, 'angle'] = data_copy.apply(lambda row: calculer_angle(xA, yA, xB, yB, row['x'], row['y']), axis=1)
-    data_copy.loc[:, 'distance'] = data_copy.apply(lambda row: calculer_distance(xA, yA, xB, yB, row['x'], row['y']), axis=1)
+    if data_copy.empty:
+        logger.warning("Aucune donnée à traiter.")
+        return
 
-    # Calculer les probabilités de réussite pour chaque coup
-    data_copy.loc[:, 'proba'] = data_copy.apply(lambda row: probabilite_reussite(model, row['angle'], row['distance']), axis=1)
+    logger.info(f"{len(data_copy)} coups trouvés pour traitement.")
 
-    # Calculer les xPoints selon le type de coup
-    data_copy.loc[:, 'xPoints'] = np.where(data_copy['type'] == 'transformation', data_copy['proba'] * 2, data_copy['proba'] * 3)
+    xA, yA, xB, yB = 7.5568, 29.7727, 7.6515, 39.9053
 
-    # Sauvegarder les données mises à jour dans le fichier coups_joueurs{n}.csv
-    nom_fichier = f'data/coups_joueurs_{str(competition)}_{str(journee)}.csv'
+    # Calculs
+    data_copy.loc[:, "angle"] = data_copy.apply(
+        lambda row: calculer_angle(xA, yA, xB, yB, row["x"], row["y"]), axis=1
+    )
+    data_copy.loc[:, "distance"] = data_copy.apply(
+        lambda row: calculer_distance(xA, yA, xB, yB, row["x"], row["y"]), axis=1
+    )
+    data_copy.loc[:, "proba"] = data_copy.apply(
+        lambda row: probabilite_reussite(model, row["angle"], row["distance"]), axis=1
+    )
+    data_copy.loc[:, "xPoints"] = np.where(
+        data_copy["type"] == "transformation",
+        data_copy["proba"] * 2,
+        data_copy["proba"] * 3,
+    )
+
+    # Sauvegarde
+    nom_fichier = f"data/coups_joueurs_{competition}_{journee}.csv"
     data_copy.to_csv(nom_fichier, index=False)
-    print(f"Données pour la compétition {competition} et la journée {journee} sauvegardées dans {nom_fichier} avec les colonnes proba et xPoints.")
+    logger.info(f"Fichier sauvegardé : {nom_fichier}")
 
 
-
-
-
+# ---------- LANCEMENT ----------
 def main():
+    logger.info("Lancement du script calcul_proba.py")
     competition, journee = get_user_input()
     coups_joueurs(journee, competition)
-   
+    logger.info("Script terminé avec succès.")
+
+
 if __name__ == "__main__":
     main()
-
-"""import pandas as pd
-import numpy as np
-import math
-import sys
-import os
-from sklearn.linear_model import LogisticRegression
-
-# Calculer l'angle entre les poteaux
-def calculer_angle(xA, yA, xB, yB, x, y):
-    dA = math.sqrt((xA - x) ** 2 + (yA - y) ** 2)
-    dB = math.sqrt((xB - x) ** 2 + (yB - y) ** 2)
-    dAB = math.sqrt((xB - xA) ** 2 + (yB - yA) ** 2)
-    
-    cos_theta = (dA ** 2 + dB ** 2 - dAB ** 2) / (2 * dA * dB)
-    theta = math.acos(cos_theta)
-    theta_degrees = math.degrees(theta)
-    
-    return theta_degrees
-
-# Calculer la distance au milieu entre les poteaux
-def calculer_distance(xA, yA, xB, yB, x, y):
-    milieu_A_B = ((xA + xB) / 2, (yA + yB) / 2)
-    return math.sqrt((milieu_A_B[0] - x) ** 2 + (milieu_A_B[1] - y) ** 2)
-
-# Charger et entraîner le modèle de régression logistique
-def charger_modele():
-    data = pd.read_csv('repertoire.csv') 
-    data['resultat'] = data['resultat'].map({'réussi': 1, 'raté': 0})
-    X = data[['angle', 'distance']]
-    y = data['resultat']
-    model = LogisticRegression()
-    model.fit(X, y)
-    return model
-
-# Calculer la probabilité de réussite pour une entrée spécifique
-def probabilite_reussite(model, angle, distance):
-    prob = model.predict_proba([[angle, distance]])[0][1]
-    return prob
-
-# Fonction principale pour traiter les données de la journée n
-def main(n):
-    # Charger le modèle
-    model = charger_modele()
-
-    # Charger les données à partir du fichier CSV avec le bon séparateur
-    data = pd.read_csv('repertoire.csv')  # Spécifier le séparateur
-    print(data.columns)  # Imprimer les colonnes pour vérification
-
-    # Filtrer les données pour n'inclure que celles de la journée n
-    data_n = data[data['journee'] == n].copy()  # Crée une copie pour éviter les avertissements
-
-    # Si aucun coup n'est trouvé pour la journée n
-    if data_n.empty:
-        print(f"Aucune donnée trouvée pour la journée {n}.")
-        return
-
-    # Coordonnées des poteaux
-    xA, yA, xB, yB = 7.556818181818187, 29.77272727272728, 7.651515151515156, 39.90530303030304
-
-    # Calculer les angles et distances pour chaque coup
-    data_n.loc[:, 'angle'] = data_n.apply(lambda row: calculer_angle(xA, yA, xB, yB, row['x'], row['y']), axis=1)
-    data_n.loc[:, 'distance'] = data_n.apply(lambda row: calculer_distance(xA, yA, xB, yB, row['x'], row['y']), axis=1)
-
-    # Calculer les probabilités de réussite pour chaque coup
-    data_n.loc[:, 'proba'] = data_n.apply(lambda row: probabilite_reussite(model, row['angle'], row['distance']), axis=1)
-
-    # Calculer les xPoints selon le type de coup
-    data_n.loc[:, 'xPoints'] = np.where(data_n['type'] == 'transformation', data_n['proba'] * 2, data_n['proba'] * 3)
-
-    # Créer un dossier pour sauvegarder les fichiers, si nécessaire
-    dossier = f'coups_joueurs_{n}'
-
-    # Sauvegarder les données mises à jour dans le fichier coups_joueurs{n}.csv
-    nom_fichier = f'coups_joueurs{n}.csv'
-    data_n.to_csv(nom_fichier, index=False)
-    print(f"Données pour la journée {n} sauvegardées dans {nom_fichier} avec les colonnes proba et xPoints.")
-
-
-
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Utilisation : python calcul_proba.py n")
-    else:
-        try:
-            n = int(sys.argv[1])
-            main(n)
-        except ValueError:
-            print("Veuillez entrer un nombre entier pour la journée.")
-"""

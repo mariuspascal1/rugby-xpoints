@@ -1,198 +1,217 @@
 import pandas as pd
 import tkinter as tk
 from tkinter import simpledialog
+import logging
+import os
 
+# ---------- CONFIGURATION LOGGING ----------
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+)
+
+
+# ---------- SAISIE UTILISATEUR ----------
 def get_user_input():
+    logger.info("Ouverture de la fenêtre de saisie des paramètres utilisateurs.")
+
     root = tk.Tk()
-    root.withdraw()  # Cacher la fenêtre principale
+    root.withdraw()
 
     competition = simpledialog.askstring("Entrée utilisateur", "Compétition :")
-    
-    # Demander la journée en tant que chaîne
-    journee_str = simpledialog.askstring("Entrée utilisateur", "Journée (laisser vide pour toute la compétition) :")
-    
-    # Si l'utilisateur entre une valeur vide, mettre journee à None
+    if not competition:
+        logger.warning("Aucune compétition renseignée par l'utilisateur.")
+
+    journee_str = simpledialog.askstring(
+        "Entrée utilisateur", "Journée (laisser vide pour toute la compétition) :"
+    )
+
     if journee_str == "":
         journee = None
+        logger.info("L’utilisateur a choisi d'inclure toutes les journées.")
     else:
-        # Sinon, convertir la chaîne en entier
         try:
             journee = int(journee_str)
+            logger.info(f"Journée sélectionnée : {journee}")
         except ValueError:
+            logger.error("Valeur invalide entrée pour la journée. Passage à None.")
             journee = None
-    
+
+    logger.info(
+        f"Saisie utilisateur terminée : competition={competition}, journee={journee}"
+    )
     return competition, journee
 
+
+# ---------- STATISTIQUES PAR JOURNÉE ----------
 def creer_stats_joueurs(journee, competition):
-    # Charger les données à partir du fichier coups_joueurs{n}.csv
-    nom_fichier = f'data/coups_joueurs_{competition}_{journee}.csv'
-    data = pd.read_csv(nom_fichier)
+    nom_fichier = f"data/coups_joueurs_{competition}_{journee}.csv"
 
-    # Créer des colonnes temporaires pour les calculs
-    data['points'] = 0
-    data.loc[(data['resultat'] == 'réussi') & (data['type'] == 'pénalité'), 'points'] = 3
-    data.loc[(data['resultat'] == 'réussi') & (data['type'] == 'transformation'), 'points'] = 2
+    logger.info(f"Chargement des données : {nom_fichier}")
 
-    # Calculer les statistiques
-    stats = data.groupby(['joueur', 'equipe', 'journee']).agg(
-        pourcentage_reussite=('resultat', lambda x: (x == 'réussi').sum() / len(x) * 100 if len(x) > 0 else 0),
-        tirs_reussis=('resultat', lambda x: (x == 'réussi').sum()),
-        total_coups_de_pieds=('resultat', 'count'),
-        nombre_de_points_marqués=('points', 'sum'),
-        total_xPoints=('xPoints', 'sum'),
-        difficulté=('proba', lambda x: 1 - x.mean() if len(x) > 0 else 1)
-    ).reset_index()
+    if not os.path.exists(nom_fichier):
+        logger.error(f"Fichier introuvable : {nom_fichier}")
+        return
 
-    # Renommer les colonnes
-    stats.rename(columns={
-        'pourcentage_reussite': 'Pourcentage de réussite',
-        'tirs_reussis': 'Tirs réussis',
-        'total_coups_de_pieds': 'Total de tentatives',
-        'nombre_de_points_marqués': 'Nombre de points marqués',
-        'total_xPoints': 'Nombre total de xPoints',
-        'difficulté': 'Difficulté',
-        'rating': 'Rating'
-    }, inplace=True)
+    try:
+        data = pd.read_csv(nom_fichier)
+    except Exception as e:
+        logger.critical(f"Erreur lors de la lecture du fichier CSV : {e}")
+        return
 
-    # Calculer le rating
-    stats['Rating'] = stats['Nombre de points marqués'] / stats['Nombre total de xPoints'].replace(0, 1)
+    if data.empty:
+        logger.warning(f"Aucune donnée trouvée dans {nom_fichier}.")
+        return
 
-    # Limiter à 2 chiffres après la virgule pour les colonnes concernées
-    cols_to_round = ['Pourcentage de réussite', 'Nombre total de xPoints', 'Difficulté', 'Rating']
-    stats[cols_to_round] = stats[cols_to_round].round(2)
+    logger.debug(f"Colonnes disponibles : {data.columns.tolist()}")
 
-    # Conversion des colonnes en type numérique
-    numeric_cols = ['Pourcentage de réussite', 'Tirs réussis', 'Total de tentatives', 
-                    'Nombre de points marqués', 'Nombre total de xPoints', 
-                    'Difficulté', 'Rating']
-    stats[numeric_cols] = stats[numeric_cols].apply(pd.to_numeric, errors='coerce')
+    # Création colonne points
+    data["points"] = 0
+    data.loc[
+        (data["resultat"] == "réussi") & (data["type"] == "pénalité"), "points"
+    ] = 3
+    data.loc[
+        (data["resultat"] == "réussi") & (data["type"] == "transformation"), "points"
+    ] = 2
 
-    # Sauvegarder les statistiques dans le fichier stats_joueurs{n}.csv
-    stats_nom_fichier = f'stats_joueurs_{competition}_{journee}.csv'
-    stats.to_csv(stats_nom_fichier, index=False)
-    print(f"Statistiques pour la journée {journee} sauvegardées dans {stats_nom_fichier}.")
+    logger.info("Calcul des statistiques joueur...")
 
-# Fonction pour créer les statistiques globales (inchangée)
+    try:
+        stats = (
+            data.groupby(["joueur", "equipe", "journee"])
+            .agg(
+                pourcentage_reussite=(
+                    "resultat",
+                    lambda x: (x == "réussi").sum() / len(x) * 100,
+                ),
+                tirs_reussis=("resultat", lambda x: (x == "réussi").sum()),
+                total_coups_de_pieds=("resultat", "count"),
+                nombre_de_points_marqués=("points", "sum"),
+                total_xPoints=("xPoints", "sum"),
+                difficulté=("proba", lambda x: 1 - x.mean()),
+            )
+            .reset_index()
+        )
+
+    except Exception as e:
+        logger.critical(f"Erreur lors du calcul des statistiques : {e}")
+        return
+
+    logger.debug(f"Stats calculées : {stats.head()}")
+
+    # Calcul rating
+    stats["Rating"] = stats["Nombre de points marqués"] / stats[
+        "Nombre total de xPoints"
+    ].replace(0, 1)
+
+    # Arrondis
+    cols = [
+        "Pourcentage de réussite",
+        "Nombre total de xPoints",
+        "Difficulté",
+        "Rating",
+    ]
+    stats[cols] = stats[cols].round(2)
+
+    # Sauvegarde
+    sortie = f"stats_joueurs_{competition}_{journee}.csv"
+    try:
+        stats.to_csv(sortie, index=False)
+        logger.info(f"Statistiques enregistrées dans {sortie}")
+    except Exception as e:
+        logger.error(f"Erreur lors de la sauvegarde du fichier {sortie} : {e}")
+
+
+# ---------- STATISTIQUES GLOBALES ----------
 def creer_stats_competition(competition):
-    # Charger directement le fichier avec toutes les données pour la compétition
-    nom_fichier = f'coups_joueurs_{competition}_None.csv'
-    df_global = pd.read_csv(nom_fichier)
+    nom_fichier = f"coups_joueurs_{competition}_None.csv"
 
-    # Créer des colonnes temporaires pour les calculs
-    df_global['points'] = 0
-    df_global.loc[(df_global['resultat'] == 'réussi') & (df_global['type'] == 'pénalité'), 'points'] = 3
-    df_global.loc[(df_global['resultat'] == 'réussi') & (df_global['type'] == 'transformation'), 'points'] = 2
+    logger.info(f"Chargement des données globales : {nom_fichier}")
 
-    # Calculer les statistiques globales
-    stats_global = df_global.groupby(['joueur', 'equipe']).agg(
-        tirs_reussis=('resultat', lambda x: (x == 'réussi').sum()),
-        total_coups_de_pieds=('resultat', 'count'),
-        nombre_de_points_marqués=('points', 'sum'),
-        total_xPoints=('xPoints', 'sum'),
-        difficulté=('proba', lambda x: 1 - x.mean() if len(x) > 0 else 1)
-    ).reset_index()
+    if not os.path.exists(nom_fichier):
+        logger.error(f"Fichier global introuvable : {nom_fichier}")
+        return
 
-    # Ajouter le pourcentage de réussite
-    stats_global['pourcentage_reussite'] = stats_global['tirs_reussis'] / stats_global['total_coups_de_pieds'].replace(0, 1) * 100
-    # Ajouter le rating
-    stats_global['rating'] = stats_global['nombre_de_points_marqués'] / stats_global['total_xPoints'].replace(0, 1)
+    try:
+        df_global = pd.read_csv(nom_fichier)
+    except Exception as e:
+        logger.critical(f"Erreur lecture fichier global : {e}")
+        return
 
-    # Limiter à 2 chiffres après la virgule pour les colonnes concernées
-    cols_to_round = ['pourcentage_reussite', 'nombre_de_points_marqués', 'total_xPoints', 'difficulté', 'rating']
-    stats_global[cols_to_round] = stats_global[cols_to_round].round(2)
+    if df_global.empty:
+        logger.warning("Aucune donnée disponible pour les statistiques globales.")
+        return
 
-    # Renommer les colonnes
-    stats_global = stats_global.rename(columns={
-        'rating': 'Rating',
-        'pourcentage_reussite': 'Pourcentage de réussite',
-        'tirs_reussis': 'Tirs réussis',
-        'total_coups_de_pieds': 'Total de tentatives',
-        'nombre_de_points_marqués': 'Nombre de points marqués',
-        'total_xPoints': 'Nombre total de xPoints',
-        'difficulté': 'Difficulté'
-    })
+    # Ajout points
+    df_global["points"] = 0
+    df_global.loc[
+        (df_global["resultat"] == "réussi") & (df_global["type"] == "pénalité"),
+        "points",
+    ] = 3
+    df_global.loc[
+        (df_global["resultat"] == "réussi") & (df_global["type"] == "transformation"),
+        "points",
+    ] = 2
 
-    # Sauvegarder le fichier final
-    stats_global.to_csv(f'stats_joueurs_{competition}.csv', index=False)
-    print(f"Statistiques globales sauvegardées dans stats_joueurs_{competition}.csv.")
+    logger.info("Calcul des statistiques globales...")
 
+    try:
+        stats_global = (
+            df_global.groupby(["joueur", "equipe"])
+            .agg(
+                tirs_reussis=("resultat", lambda x: (x == "réussi").sum()),
+                total_coups_de_pieds=("resultat", "count"),
+                nombre_de_points_marqués=("points", "sum"),
+                total_xPoints=("xPoints", "sum"),
+                difficulté=("proba", lambda x: 1 - x.mean()),
+            )
+            .reset_index()
+        )
+    except Exception as e:
+        logger.critical(f"Erreur calcul stats globales : {e}")
+        return
+
+    stats_global["pourcentage_reussite"] = (
+        stats_global["tirs_reussis"] / stats_global["total_coups_de_pieds"] * 100
+    )
+    stats_global["rating"] = stats_global["nombre_de_points_marqués"] / stats_global[
+        "total_xPoints"
+    ].replace(0, 1)
+
+    stats_global = stats_global.rename(
+        columns={
+            "rating": "Rating",
+            "pourcentage_reussite": "Pourcentage de réussite",
+            "tirs_reussis": "Tirs réussis",
+            "total_coups_de_pieds": "Total de tentatives",
+            "nombre_de_points_marqués": "Nombre de points marqués",
+            "total_xPoints": "Nombre total de xPoints",
+            "difficulté": "Difficulté",
+        }
+    )
+
+    sortie = f"stats_joueurs_{competition}.csv"
+    try:
+        stats_global.to_csv(sortie, index=False)
+        logger.info(f"Statistiques globales sauvegardées dans {sortie}")
+    except Exception as e:
+        logger.error(f"Erreur lors de la sauvegarde globale : {e}")
+
+
+# ---------- MAIN ----------
 def main():
+    logger.info("Démarrage du script stats_joueurs.py")
+
     competition, journee = get_user_input()
-    if journee is None: #0 pour faire les stats de toute la compétition
+
+    if journee is None:
         creer_stats_competition(competition)
     else:
         creer_stats_joueurs(journee, competition)
 
+    logger.info("Fin d'exécution du script.")
+
+
 if __name__ == "__main__":
     main()
-
-
-"""import pandas as pd
-import glob
-import sys
-import tkinter as tk
-from tkinter import simpledialog
-
-def get_user_input():
-    root = tk.Tk()
-    root.withdraw()  # Cacher la fenêtre principale
-
-    nom_joueur = simpledialog.askstring("Entrée utilisateur", "Joueur :")
-    nom_equipe = simpledialog.askstring("Entrée utilisateur", "Équipe :")
-    competition = simpledialog.askstring("Entrée utilisateur", "Compétition :")
-    journee = simpledialog.askinteger("Entrée utilisateur", "Journée :")
-    type_coup = simpledialog.askstring("Entrée utilisateur", "Type (pénalité/transformation) :")
-    
-    return nom_joueur, nom_equipe, competition, journee, type_coup
-
-def creer_nom_fichier(nom_joueur, nom_equipe, competition, journee, type_coup):
-    elements = ["coups_joueurs"]
-    if competition: elements.append(competition)
-    if journee: elements.append(str(journee))
-    if nom_equipe: elements.append(nom_equipe)
-    if nom_joueur: elements.append(nom_joueur)
-    if type_coup: elements.append(type_coup)
-    
-    return "_".join(elements) + ".csv"
-
-def creer_stats_joueurs():
-    nom_joueur, nom_equipe, competition, journee, type_coup = get_user_input()
-    nom_fichier = creer_nom_fichier(nom_joueur, nom_equipe, competition, journee, type_coup)
-    
-    try:
-        data = pd.read_csv(nom_fichier)
-    except FileNotFoundError:
-        print(f"Fichier {nom_fichier} introuvable.")
-        return
-    
-    data['points'] = 0
-    data.loc[(data['resultat'] == 'réussi') & (data['type'] == 'pénalité'), 'points'] = 3
-    data.loc[(data['resultat'] == 'réussi') & (data['type'] == 'transformation'), 'points'] = 2
-
-    stats = data.groupby(['joueur', 'equipe', 'journee']).agg(
-        pourcentage_reussite=('resultat', lambda x: (x == 'réussi').sum() / len(x) * 100 if len(x) > 0 else 0),
-        tirs_reussis=('resultat', lambda x: (x == 'réussi').sum()),
-        total_coups_de_pieds=('resultat', 'count'),
-        nombre_de_points_marqués=('points', 'sum'),
-        total_xPoints=('xPoints', 'sum'),
-        difficulté=('proba', lambda x: 1 - x.mean() if len(x) > 0 else 1)
-    ).reset_index()
-    
-    stats.rename(columns={
-        'pourcentage_reussite': 'Pourcentage de réussite',
-        'tirs_reussis': 'Tirs réussis',
-        'total_coups_de_pieds': 'Total de tentatives',
-        'nombre_de_points_marqués': 'Nombre de points marqués',
-        'total_xPoints': 'Nombre total de xPoints',
-        'difficulté': 'Difficulté'
-    }, inplace=True)
-    
-    stats['Rating'] = stats['Nombre de points marqués'] / stats['Nombre total de xPoints'].replace(0, 1)
-    stats[['Pourcentage de réussite', 'Nombre total de xPoints', 'Difficulté', 'Rating']] = stats[['Pourcentage de réussite', 'Nombre total de xPoints', 'Difficulté', 'Rating']].round(2)
-    
-    stats_nom_fichier = nom_fichier.replace("coups_joueurs", "stats_joueurs")
-    stats.to_csv(stats_nom_fichier, index=False)
-    print(f"Statistiques sauvegardées dans {stats_nom_fichier}.")
-
-if __name__ == "__main__":
-    creer_stats_joueurs()"""
