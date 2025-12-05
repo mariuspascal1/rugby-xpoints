@@ -25,3 +25,8 @@ repository = "https://github.com/mariuspascal1/rugby-xpoints"
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "ruff (>=0.14.7,<0.15.0)"
+]

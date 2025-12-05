@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 import math
-import sys
-import os
 from sklearn.linear_model import LogisticRegression
 import tkinter as tk
 from tkinter import simpledialog
@@ -94,9 +92,6 @@ def coups_joueurs(journee, competition):
 
     # Calculer les xPoints selon le type de coup
     data_copy.loc[:, 'xPoints'] = np.where(data_copy['type'] == 'transformation', data_copy['proba'] * 2, data_copy['proba'] * 3)
-
-    # Créer un dossier pour sauvegarder les fichiers, si nécessaire
-    dossier = f'data/coups_joueurs_{str(competition)}_{str(journee)}'
 
     # Sauvegarder les données mises à jour dans le fichier coups_joueurs{n}.csv
     nom_fichier = f'data/coups_joueurs_{str(competition)}_{str(journee)}.csv'

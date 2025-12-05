@@ -1,15 +1,9 @@
-import pandas as pd
 import math
-import sys
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import csv
 import os
-import numpy as np
 import tkinter as tk
-from tkinter import simpledialog, ttk
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
 
 tous_les_coups = []
 

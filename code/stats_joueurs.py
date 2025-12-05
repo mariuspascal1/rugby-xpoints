@@ -1,8 +1,6 @@
 import pandas as pd
-import glob
-import sys
 import tkinter as tk
-from tkinter import simpledialog, ttk
+from tkinter import simpledialog
 
 def get_user_input():
     root = tk.Tk()

@@ -67,5 +67,20 @@ poetry run stats_joueurs
 
 ---
 
+## Analyse statique du code
+
+Le projet utilise Ruff pour analyser automatiquement la qualité du code :
+
+Pour vérifier le code : 
+```bash
+poetry run ruff check .
+```
+
+Pour effectuer la correction des erreurs detectées :
+```bash
+poetry run ruff check --fix .
+```
+La configuration de Ruff est incluse dans le fichier pyproject.toml.
+
 ## Lien vers le dépôt GitHub
 https://github.com/mariuspascal1/rugby-xpoints
