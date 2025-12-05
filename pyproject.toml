@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Analyse des buteurs de rugby (pénalités et transformations) via la métrique xPoints (expected points)."
 authors = ["Marius Pascal <marius.pascal2b@gmail.com>"]
 readme = "README.md"
-packages = [{ include = "code" }]
+packages = [{ include = "rugby_xpoints" }]
 license = "MIT"
 
 [tool.poetry.dependencies]
@@ -29,5 +29,6 @@ build-backend = "poetry.core.masonry.api"
 [dependency-groups]
 dev = [
     "ruff (>=0.14.7,<0.15.0)",
-    "pre-commit (>=4.5.0,<5.0.0)"
+    "pre-commit (>=4.5.0,<5.0.0)",
+    "pytest (>=9.0.1,<10.0.0)"
 ]
