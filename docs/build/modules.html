@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Modules du projet &#8212; rugby-xpoints 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Bienvenue dans la documentation de rugby-xpoints !" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-rugby_xpoints.calcul_proba">
+<span id="modules-du-projet"></span><h1>Modules du projet<a class="headerlink" href="#module-rugby_xpoints.calcul_proba" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.calcul_proba.calculer_angle">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.calcul_proba.</span></span><span class="sig-name descname"><span class="pre">calculer_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.calcul_proba.calculer_angle" title="Link to this definition">¶</a></dt>
+<dd><p>Calcule la distance entre le point de tir et le milieu exact des poteaux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xA</strong> (<em>float</em>) – Coordonnée x du poteau gauche.</p></li>
+<li><p><strong>yA</strong> (<em>float</em>) – Coordonnée y du poteau gauche.</p></li>
+<li><p><strong>xB</strong> (<em>float</em>) – Coordonnée x du poteau droit.</p></li>
+<li><p><strong>yB</strong> (<em>float</em>) – Coordonnée y du poteau droit.</p></li>
+<li><p><strong>x</strong> (<em>float</em>) – Coordonnée x du point de tir.</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – Coordonnée y du point de tir.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Distance euclidienne entre le point de tir</dt><dd><p>et le milieu des poteaux.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Si une erreur inattendue survient dans les calculs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.calcul_proba.calculer_distance">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.calcul_proba.</span></span><span class="sig-name descname"><span class="pre">calculer_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.calcul_proba.calculer_distance" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.calcul_proba.charger_modele">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.calcul_proba.</span></span><span class="sig-name descname"><span class="pre">charger_modele</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.calcul_proba.charger_modele" title="Link to this definition">¶</a></dt>
+<dd><p>Charge les données du fichier <cite>data/repertoire.csv</cite> et entraîne
+un modèle de régression logistique basé sur l’angle et la distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Modèle entraîné pour prédire la probabilité</dt><dd><p>de réussite d’un coup de pied.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>LogisticRegression</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>FileNotFoundError</strong> – Si le fichier d’entrée n’existe pas.</p></li>
+<li><p><strong>Exception</strong> – Pour toute erreur dans l’entraînement du modèle.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.calcul_proba.coups_joueurs">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.calcul_proba.</span></span><span class="sig-name descname"><span class="pre">coups_joueurs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">journee</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">competition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.calcul_proba.coups_joueurs" title="Link to this definition">¶</a></dt>
+<dd><p>Calcule tous les indicateurs xPoints, probabilités, angles et distances
+pour une journée donnée ou pour l’ensemble d’une compétition.</p>
+<p>Le traitement :
+- charge les données brutes,
+- filtre selon compétition/journée,
+- calcule angle, distance, probabilité,
+- calcule xPoints,
+- sauvegarde le fichier final.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>journee</strong> (<em>int</em><em> | </em><em>None</em>) – Journée ciblée, ou None pour toute la compétition.</p></li>
+<li><p><strong>competition</strong> (<em>str</em>) – Nom de la compétition.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Produces:</dt><dd><p>CSV <cite>data/coups_joueurs_&lt;competition&gt;_&lt;journee&gt;.csv</cite></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>FileNotFoundError</strong> – Si <cite>repertoire.csv</cite> est manquant.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.calcul_proba.get_user_input">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.calcul_proba.</span></span><span class="sig-name descname"><span class="pre">get_user_input</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.calcul_proba.get_user_input" title="Link to this definition">¶</a></dt>
+<dd><p>Ouvre une fenêtre Tkinter pour demander à l’utilisateur
+la compétition et éventuellement la journée à analyser.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>competition (str | None): Nom de la compétition, ou None si vide.</p></li>
+<li><p>journee (int | None): Numéro de la journée, ou None pour toute la compétition.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>La fonction logge toutes les actions utilisateur.</p></li>
+<li><p>Une valeur de journée non numérique est convertie en None.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.calcul_proba.main">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.calcul_proba.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.calcul_proba.main" title="Link to this definition">¶</a></dt>
+<dd><p>Point d’entrée principal du script.</p>
+<ul class="simple">
+<li><p>Récupère les informations utilisateur (compétition, journée)</p></li>
+<li><p>Exécute le pipeline principal <cite>coups_joueurs</cite></p></li>
+<li><p>Logge le début et la fin de l’exécution</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.calcul_proba.probabilite_reussite">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.calcul_proba.</span></span><span class="sig-name descname"><span class="pre">probabilite_reussite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.calcul_proba.probabilite_reussite" title="Link to this definition">¶</a></dt>
+<dd><p>Calcule la probabilité de réussite d’un coup de pied à partir
+du modèle statistique entraîné.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>LogisticRegression</em>) – Modèle préalablement entraîné.</p></li>
+<li><p><strong>angle</strong> (<em>float</em>) – Angle visible entre les poteaux.</p></li>
+<li><p><strong>distance</strong> (<em>float</em>) – Distance au centre des poteaux.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Probabilité entre 0 et 1 que le coup soit réussi.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Si le modèle ne parvient pas à prédire.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function" id="module-rugby_xpoints.stats_joueurs">
+<dt class="sig sig-object py" id="rugby_xpoints.stats_joueurs.creer_stats_competition">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.stats_joueurs.</span></span><span class="sig-name descname"><span class="pre">creer_stats_competition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">competition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.stats_joueurs.creer_stats_competition" title="Link to this definition">¶</a></dt>
+<dd><p>Génère un fichier CSV contenant les statistiques globales d’une compétition
+(toutes journées confondues).</p>
+<dl class="simple">
+<dt>Cette fonction regroupe :</dt><dd><ul class="simple">
+<li><p>le total de points,</p></li>
+<li><p>le nombre de tentatives,</p></li>
+<li><p>le % de réussite global,</p></li>
+<li><p>les xPoints cumulés,</p></li>
+<li><p>un rating global du buteur.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>competition</strong> (<em>str</em>) – Nom de la compétition à analyser.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Produces:</dt><dd><p>CSV: <cite>stats_joueurs_&lt;competition&gt;.csv</cite></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>FileNotFoundError</strong> – Si le fichier global est introuvable.</p></li>
+<li><p><strong>Exception</strong> – En cas d’échec de traitement ou de sauvegarde.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.stats_joueurs.creer_stats_joueurs">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.stats_joueurs.</span></span><span class="sig-name descname"><span class="pre">creer_stats_joueurs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">journee</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">competition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.stats_joueurs.creer_stats_joueurs" title="Link to this definition">¶</a></dt>
+<dd><p>Génère et enregistre les statistiques des joueurs pour une journée donnée.</p>
+<dl class="simple">
+<dt>Cette fonction :</dt><dd><ul class="simple">
+<li><p>charge les données générées par calcul_proba.py,</p></li>
+<li><p>calcule plusieurs indicateurs (points marqués, xPoints, % de réussite, difficulté),</p></li>
+<li><p>calcule un rating basé sur xPoints,</p></li>
+<li><p>sauvegarde un fichier CSV contenant toutes les statistiques.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>journee</strong> (<em>int</em>) – Numéro de la journée analysée.</p></li>
+<li><p><strong>competition</strong> (<em>str</em>) – Nom de la compétition concernée.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Produces:</dt><dd><p>CSV: <cite>stats_joueurs_&lt;competition&gt;_&lt;journee&gt;.csv</cite></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>FileNotFoundError</strong> – Si le fichier source est absent.</p></li>
+<li><p><strong>Exception</strong> – Si une erreur survient durant le traitement ou l’écriture.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.stats_joueurs.get_user_input">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.stats_joueurs.</span></span><span class="sig-name descname"><span class="pre">get_user_input</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.stats_joueurs.get_user_input" title="Link to this definition">¶</a></dt>
+<dd><p>Ouvre une interface Tkinter afin de récupérer la compétition et,
+éventuellement, la journée pour laquelle générer des statistiques.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>competition (str | None): Nom de la compétition saisie.</p></li>
+<li><p>journee (int | None): Numéro de journée, ou None si l’utilisateur
+souhaite traiter l’ensemble de la compétition.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Une valeur vide pour la journée est interprétée comme None.</p></li>
+<li><p>Les erreurs de conversion (journee non numérique) sont gérées et loggées.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.stats_joueurs.main">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.stats_joueurs.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.stats_joueurs.main" title="Link to this definition">¶</a></dt>
+<dd><p>Point d’entrée principal du script.</p>
+<ul class="simple">
+<li><p>Récupère les paramètres utilisateur</p></li>
+<li><p>Lance soit le calcul d’une journée donnée, soit le calcul global</p></li>
+<li><p>Gère l’affichage des logs de début et fin de traitement</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function" id="module-rugby_xpoints.repertoireV3">
+<dt class="sig sig-object py" id="rugby_xpoints.repertoireV3.calculer_angle">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.repertoireV3.</span></span><span class="sig-name descname"><span class="pre">calculer_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.repertoireV3.calculer_angle" title="Link to this definition">¶</a></dt>
+<dd><p>Calcule l’angle visible entre les deux poteaux depuis un point donné.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xA</strong> (<em>float</em>) – Position x du poteau gauche.</p></li>
+<li><p><strong>yA</strong> (<em>float</em>) – Position y du poteau gauche.</p></li>
+<li><p><strong>xB</strong> (<em>float</em>) – Position x du poteau droit.</p></li>
+<li><p><strong>yB</strong> (<em>float</em>) – Position y du poteau droit.</p></li>
+<li><p><strong>x</strong> (<em>float</em>) – Coordonnée x du point du tir.</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – Coordonnée y du point du tir.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Angle en degrés.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Si un problème mathématique survient (ex: division par zéro).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.repertoireV3.calculer_distance">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.repertoireV3.</span></span><span class="sig-name descname"><span class="pre">calculer_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.repertoireV3.calculer_distance" title="Link to this definition">¶</a></dt>
+<dd><p>Calcule la distance entre un point de tir et le milieu des poteaux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xA</strong> (<em>float</em>) – Coordonnées des poteaux.</p></li>
+<li><p><strong>yA</strong> (<em>float</em>) – Coordonnées des poteaux.</p></li>
+<li><p><strong>xB</strong> (<em>float</em>) – Coordonnées des poteaux.</p></li>
+<li><p><strong>yB</strong> (<em>float</em>) – Coordonnées des poteaux.</p></li>
+<li><p><strong>x</strong> (<em>float</em>) – Coordonnées du tir.</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – Coordonnées du tir.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Distance entre le tir et le centre des poteaux.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Si une erreur mathématique survient.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.repertoireV3.gerer_terrain">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.repertoireV3.</span></span><span class="sig-name descname"><span class="pre">gérer_terrain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nom_joueur</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nom_equipe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">competition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">journee</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_coup</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.repertoireV3.gerer_terrain" title="Link to this definition">¶</a></dt>
+<dd><p>Affiche un terrain interactif permettant à l’utilisateur de cliquer
+pour enregistrer des coups de pied.</p>
+<dl class="simple">
+<dt>Chaque clic :</dt><dd><ul class="simple">
+<li><p>bouton gauche = tir réussi</p></li>
+<li><p>bouton droit = tir raté</p></li>
+</ul>
+</dd>
+</dl>
+<p>Les informations géométriques (angle, distance) sont calculées automatiquement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_path</strong> (<em>str</em>) – Chemin de l’image du terrain.</p></li>
+<li><p><strong>nom_joueur</strong> (<em>str</em>) – Nom du buteur.</p></li>
+<li><p><strong>nom_equipe</strong> (<em>str</em>) – Nom de l’équipe.</p></li>
+<li><p><strong>competition</strong> (<em>str</em>) – Nom de la compétition.</p></li>
+<li><p><strong>journee</strong> (<em>str</em>) – Numéro de journée.</p></li>
+<li><p><strong>type_coup</strong> (<em>str</em>) – “pénalité” ou “transformation”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.repertoireV3.main">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.repertoireV3.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.repertoireV3.main" title="Link to this definition">¶</a></dt>
+<dd><p>Point d’entrée du script.
+Lance l’interface graphique pour la saisie des informations,
+puis ouvre le terrain interactif.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.repertoireV3.sauvegarder_coups">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.repertoireV3.</span></span><span class="sig-name descname"><span class="pre">sauvegarder_coups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fichier_sauvegarde</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.repertoireV3.sauvegarder_coups" title="Link to this definition">¶</a></dt>
+<dd><p>Sauvegarde toutes les entrées présentes dans <cite>tous_les_coups</cite>
+dans un fichier CSV (création ou ajout).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fichier_sauvegarde</strong> (<em>str</em>) – Chemin du CSV où écrire les données.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rugby_xpoints.repertoireV3.start_interface">
+<span class="sig-prename descclassname"><span class="pre">rugby_xpoints.repertoireV3.</span></span><span class="sig-name descname"><span class="pre">start_interface</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rugby_xpoints.repertoireV3.start_interface" title="Link to this definition">¶</a></dt>
+<dd><p>Ouvre une interface Tkinter permettant de saisir l’identité du tireur,
+son équipe, la compétition, la journée et le type de coup de pied.</p>
+<p>L’interface valide ensuite les entrées utilisateur et lance l’affichage
+du terrain interactif permettant de cliquer pour enregistrer des tirs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">rugby-xpoints</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contenu</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modules du projet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.calcul_proba.calculer_angle"><code class="docutils literal notranslate"><span class="pre">calculer_angle()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.calcul_proba.calculer_distance"><code class="docutils literal notranslate"><span class="pre">calculer_distance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.calcul_proba.charger_modele"><code class="docutils literal notranslate"><span class="pre">charger_modele()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.calcul_proba.coups_joueurs"><code class="docutils literal notranslate"><span class="pre">coups_joueurs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.calcul_proba.get_user_input"><code class="docutils literal notranslate"><span class="pre">get_user_input()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.calcul_proba.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.calcul_proba.probabilite_reussite"><code class="docutils literal notranslate"><span class="pre">probabilite_reussite()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.stats_joueurs.creer_stats_competition"><code class="docutils literal notranslate"><span class="pre">creer_stats_competition()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.stats_joueurs.creer_stats_joueurs"><code class="docutils literal notranslate"><span class="pre">creer_stats_joueurs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.stats_joueurs.get_user_input"><code class="docutils literal notranslate"><span class="pre">get_user_input()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.stats_joueurs.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.repertoireV3.calculer_angle"><code class="docutils literal notranslate"><span class="pre">calculer_angle()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.repertoireV3.calculer_distance"><code class="docutils literal notranslate"><span class="pre">calculer_distance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.repertoireV3.gerer_terrain"><code class="docutils literal notranslate"><span class="pre">gérer_terrain()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.repertoireV3.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.repertoireV3.sauvegarder_coups"><code class="docutils literal notranslate"><span class="pre">sauvegarder_coups()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rugby_xpoints.repertoireV3.start_interface"><code class="docutils literal notranslate"><span class="pre">start_interface()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Bienvenue dans la documentation de rugby-xpoints !</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Marius Pascal.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

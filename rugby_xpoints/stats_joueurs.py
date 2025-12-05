@@ -14,6 +14,20 @@ logging.basicConfig(
 
 # ---------- SAISIE UTILISATEUR ----------
 def get_user_input():
+    """
+    Ouvre une interface Tkinter afin de récupérer la compétition et,
+    éventuellement, la journée pour laquelle générer des statistiques.
+
+    Returns:
+        tuple:
+            - competition (str | None): Nom de la compétition saisie.
+            - journee (int | None): Numéro de journée, ou None si l’utilisateur
+              souhaite traiter l’ensemble de la compétition.
+
+    Notes:
+        - Une valeur vide pour la journée est interprétée comme None.
+        - Les erreurs de conversion (journee non numérique) sont gérées et loggées.
+    """
     logger.info("Ouverture de la fenêtre de saisie des paramètres utilisateurs.")
 
     root = tk.Tk()
@@ -46,6 +60,26 @@ def get_user_input():
 
 # ---------- STATISTIQUES PAR JOURNÉE ----------
 def creer_stats_joueurs(journee, competition):
+    """
+    Génère et enregistre les statistiques des joueurs pour une journée donnée.
+
+    Cette fonction :
+      - charge les données générées par calcul_proba.py,
+      - calcule plusieurs indicateurs (points marqués, xPoints, % de réussite, difficulté),
+      - calcule un rating basé sur xPoints,
+      - sauvegarde un fichier CSV contenant toutes les statistiques.
+
+    Args:
+        journee (int): Numéro de la journée analysée.
+        competition (str): Nom de la compétition concernée.
+
+    Produces:
+        CSV: `stats_joueurs_<competition>_<journee>.csv`
+
+    Raises:
+        FileNotFoundError: Si le fichier source est absent.
+        Exception: Si une erreur survient durant le traitement ou l’écriture.
+    """
     nom_fichier = f"data/coups_joueurs_{competition}_{journee}.csv"
 
     logger.info(f"Chargement des données : {nom_fichier}")
@@ -114,7 +148,6 @@ def creer_stats_joueurs(journee, competition):
     ]
     stats[cols] = stats[cols].round(2)
 
-    # Sauvegarde
     sortie = f"stats_joueurs_{competition}_{journee}.csv"
     try:
         stats.to_csv(sortie, index=False)
@@ -125,6 +158,27 @@ def creer_stats_joueurs(journee, competition):
 
 # ---------- STATISTIQUES GLOBALES ----------
 def creer_stats_competition(competition):
+    """
+    Génère un fichier CSV contenant les statistiques globales d'une compétition
+    (toutes journées confondues).
+
+    Cette fonction regroupe :
+      - le total de points,
+      - le nombre de tentatives,
+      - le % de réussite global,
+      - les xPoints cumulés,
+      - un rating global du buteur.
+
+    Args:
+        competition (str): Nom de la compétition à analyser.
+
+    Produces:
+        CSV: `stats_joueurs_<competition>.csv`
+
+    Raises:
+        FileNotFoundError: Si le fichier global est introuvable.
+        Exception: En cas d’échec de traitement ou de sauvegarde.
+    """
     nom_fichier = f"coups_joueurs_{competition}_None.csv"
 
     logger.info(f"Chargement des données globales : {nom_fichier}")
@@ -201,6 +255,16 @@ def creer_stats_competition(competition):
 
 # ---------- MAIN ----------
 def main():
+    """
+    Point d’entrée principal du script.
+
+    - Récupère les paramètres utilisateur
+    - Lance soit le calcul d'une journée donnée, soit le calcul global
+    - Gère l'affichage des logs de début et fin de traitement
+
+    Returns:
+        None
+    """
     logger.info("Démarrage du script stats_joueurs.py")
 
     competition, journee = get_user_input()

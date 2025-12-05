@@ -30,5 +30,6 @@ build-backend = "poetry.core.masonry.api"
 dev = [
     "ruff (>=0.14.7,<0.15.0)",
     "pre-commit (>=4.5.0,<5.0.0)",
-    "pytest (>=9.0.1,<10.0.0)"
+    "pytest (>=9.0.1,<10.0.0)",
+    "sphinx (>=9.0.4,<10.0.0)"
 ]

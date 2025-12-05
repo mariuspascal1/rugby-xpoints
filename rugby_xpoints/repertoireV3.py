@@ -17,11 +17,22 @@ tous_les_coups = []
 
 # ---------- INTERFACE UTILISATEUR ----------
 def start_interface():
+    """
+    Ouvre une interface Tkinter permettant de saisir l’identité du tireur,
+    son équipe, la compétition, la journée et le type de coup de pied.
+
+    L’interface valide ensuite les entrées utilisateur et lance l’affichage
+    du terrain interactif permettant de cliquer pour enregistrer des tirs.
+
+    Returns:
+        None
+    """
     logger.info("Ouverture de l'interface graphique de saisie.")
 
     root = tk.Tk()
     root.title("Saisie des informations")
 
+    # Champs utilisateur
     tk.Label(root, text="Joueur:").grid(row=0, column=0)
     entry_joueur = tk.Entry(root)
     entry_joueur.grid(row=0, column=1)
@@ -43,6 +54,12 @@ def start_interface():
     entry_type.grid(row=4, column=1)
 
     def valider():
+        """
+        Valide la saisie utilisateur et lance l'affichage interactif du terrain.
+
+        Returns:
+            None
+        """
         nom_joueur = entry_joueur.get()
         nom_equipe = entry_equipe.get()
         competition = entry_competition.get()
@@ -58,6 +75,7 @@ def start_interface():
             "rugby_xPoints.png", nom_joueur, nom_equipe, competition, journee, type_coup
         )
 
+    # Bouton validation
     btn_valider = tk.Button(root, text="Valider", command=valider)
     btn_valider.grid(row=5, column=0, columnspan=2)
 
@@ -66,6 +84,23 @@ def start_interface():
 
 # ---------- CALCUL ANGLE ----------
 def calculer_angle(xA, yA, xB, yB, x, y):
+    """
+    Calcule l’angle visible entre les deux poteaux depuis un point donné.
+
+    Args:
+        xA (float): Position x du poteau gauche.
+        yA (float): Position y du poteau gauche.
+        xB (float): Position x du poteau droit.
+        yB (float): Position y du poteau droit.
+        x (float): Coordonnée x du point du tir.
+        y (float): Coordonnée y du point du tir.
+
+    Returns:
+        float: Angle en degrés.
+
+    Raises:
+        Exception: Si un problème mathématique survient (ex: division par zéro).
+    """
     try:
         dA = math.sqrt((xA - x) ** 2 + (yA - y) ** 2)
         dB = math.sqrt((xB - x) ** 2 + (yB - y) ** 2)
@@ -85,6 +120,19 @@ def calculer_angle(xA, yA, xB, yB, x, y):
 
 # ---------- CALCUL DISTANCE ----------
 def calculer_distance(xA, yA, xB, yB, x, y):
+    """
+    Calcule la distance entre un point de tir et le milieu des poteaux.
+
+    Args:
+        xA, yA, xB, yB (float): Coordonnées des poteaux.
+        x, y (float): Coordonnées du tir.
+
+    Returns:
+        float: Distance entre le tir et le centre des poteaux.
+
+    Raises:
+        Exception: Si une erreur mathématique survient.
+    """
     try:
         milieu_A_B = ((xA + xB) / 2, (yA + yB) / 2)
         distance = math.sqrt((milieu_A_B[0] - x) ** 2 + (milieu_A_B[1] - y) ** 2)
@@ -98,6 +146,27 @@ def calculer_distance(xA, yA, xB, yB, x, y):
 
 # ---------- INTERACTION AVEC LE TERRAIN ----------
 def gérer_terrain(image_path, nom_joueur, nom_equipe, competition, journee, type_coup):
+    """
+    Affiche un terrain interactif permettant à l'utilisateur de cliquer
+    pour enregistrer des coups de pied.
+
+    Chaque clic :
+      - bouton gauche = tir réussi
+      - bouton droit = tir raté
+
+    Les informations géométriques (angle, distance) sont calculées automatiquement.
+
+    Args:
+        image_path (str): Chemin de l'image du terrain.
+        nom_joueur (str): Nom du buteur.
+        nom_equipe (str): Nom de l'équipe.
+        competition (str): Nom de la compétition.
+        journee (str): Numéro de journée.
+        type_coup (str): "pénalité" ou "transformation".
+
+    Returns:
+        None
+    """
     global tous_les_coups
 
     logger.info("Chargement de l'image du terrain...")
@@ -106,10 +175,20 @@ def gérer_terrain(image_path, nom_joueur, nom_equipe, competition, journee, typ
         logger.error(f"Image introuvable : {image_path}")
         return
 
+    # Coordonnées des poteaux
     xA, yA = 7.5568, 29.7727
     xB, yB = 7.6515, 39.9053
 
     def on_click(event):
+        """
+        Callback appelé lors d’un clic sur le terrain.
+
+        Args:
+            event: Événement Matplotlib contenant les coordonnées du clic.
+
+        Returns:
+            None
+        """
         x, y = event.xdata, event.ydata
 
         if x is None or y is None:
@@ -122,8 +201,6 @@ def gérer_terrain(image_path, nom_joueur, nom_equipe, competition, journee, typ
             resultat = "raté"
         else:
             return
-
-        couleur = "go" if resultat == "réussi" else "ro"
 
         angle = calculer_angle(xA, yA, xB, yB, x, y)
         distance = calculer_distance(xA, yA, xB, yB, x, y)
@@ -148,12 +225,19 @@ def gérer_terrain(image_path, nom_joueur, nom_equipe, competition, journee, typ
             ]
         )
 
+        couleur = "go" if resultat == "réussi" else "ro"
         plt.plot(x, y, couleur)
         plt.draw()
 
         sauvegarder_coups("data/repertoire.csv")
 
     def dessiner_terrain():
+        """
+        Affiche l'image du terrain et prépare la capture graphique des clics.
+
+        Returns:
+            None
+        """
         try:
             img = mpimg.imread(image_path)
         except Exception as e:
@@ -178,6 +262,16 @@ def gérer_terrain(image_path, nom_joueur, nom_equipe, competition, journee, typ
 
 # ---------- SAUVEGARDE ----------
 def sauvegarder_coups(fichier_sauvegarde):
+    """
+    Sauvegarde toutes les entrées présentes dans `tous_les_coups`
+    dans un fichier CSV (création ou ajout).
+
+    Args:
+        fichier_sauvegarde (str): Chemin du CSV où écrire les données.
+
+    Returns:
+        None
+    """
     global tous_les_coups
 
     mode = "a" if os.path.exists(fichier_sauvegarde) else "w"
@@ -205,7 +299,7 @@ def sauvegarder_coups(fichier_sauvegarde):
 
             writer.writerows(tous_les_coups)
 
-        logger.info(f"Fichier mise à jour : {fichier_sauvegarde}")
+        logger.info(f"Fichier mis à jour : {fichier_sauvegarde}")
 
     except Exception as e:
         logger.error(f"Erreur lors de la sauvegarde CSV : {e}")
@@ -213,6 +307,14 @@ def sauvegarder_coups(fichier_sauvegarde):
 
 # ---------- MAIN ----------
 def main():
+    """
+    Point d'entrée du script.
+    Lance l'interface graphique pour la saisie des informations,
+    puis ouvre le terrain interactif.
+
+    Returns:
+        None
+    """
     logger.info("Lancement du script repertoireV3.py")
     start_interface()
     logger.info("Script terminé.")

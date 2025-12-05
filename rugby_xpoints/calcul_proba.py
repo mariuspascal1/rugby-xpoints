@@ -16,6 +16,20 @@ logging.basicConfig(
 
 # ---------- INTERACTION UTILISATEUR ----------
 def get_user_input():
+    """
+    Ouvre une fenêtre Tkinter pour demander à l'utilisateur
+    la compétition et éventuellement la journée à analyser.
+
+    Returns:
+        tuple:
+            - competition (str | None): Nom de la compétition, ou None si vide.
+            - journee (int | None): Numéro de la journée, ou None pour toute la compétition.
+
+    Notes:
+        - La fonction logge toutes les actions utilisateur.
+        - Une valeur de journée non numérique est convertie en None.
+    """
+
     logger.info("Ouverture de la fenêtre de saisie utilisateur.")
 
     root = tk.Tk()
@@ -46,6 +60,25 @@ def get_user_input():
 
 # ---------- CALCUL DES ANGLES & DISTANCES ----------
 def calculer_angle(xA, yA, xB, yB, x, y):
+    """
+    Calcule la distance entre le point de tir et le milieu exact des poteaux.
+
+    Args:
+        xA (float): Coordonnée x du poteau gauche.
+        yA (float): Coordonnée y du poteau gauche.
+        xB (float): Coordonnée x du poteau droit.
+        yB (float): Coordonnée y du poteau droit.
+        x (float): Coordonnée x du point de tir.
+        y (float): Coordonnée y du point de tir.
+
+    Returns:
+        float: Distance euclidienne entre le point de tir
+               et le milieu des poteaux.
+
+    Raises:
+        Exception: Si une erreur inattendue survient dans les calculs.
+    """
+
     try:
         dA = math.sqrt((xA - x) ** 2 + (yA - y) ** 2)
         dB = math.sqrt((xB - x) ** 2 + (yB - y) ** 2)
@@ -78,6 +111,19 @@ def calculer_distance(xA, yA, xB, yB, x, y):
 
 # ---------- CHARGEMENT DU MODÈLE ----------
 def charger_modele():
+    """
+    Charge les données du fichier `data/repertoire.csv` et entraîne
+    un modèle de régression logistique basé sur l'angle et la distance.
+
+    Returns:
+        LogisticRegression: Modèle entraîné pour prédire la probabilité
+                            de réussite d'un coup de pied.
+
+    Raises:
+        FileNotFoundError: Si le fichier d'entrée n'existe pas.
+        Exception: Pour toute erreur dans l'entraînement du modèle.
+    """
+
     logger.info("Chargement du fichier repertoire.csv...")
 
     try:
@@ -102,6 +148,22 @@ def charger_modele():
 
 # ---------- CALCUL DE LA PROBABILITÉ ----------
 def probabilite_reussite(model, angle, distance):
+    """
+    Calcule la probabilité de réussite d’un coup de pied à partir
+    du modèle statistique entraîné.
+
+    Args:
+        model (LogisticRegression): Modèle préalablement entraîné.
+        angle (float): Angle visible entre les poteaux.
+        distance (float): Distance au centre des poteaux.
+
+    Returns:
+        float: Probabilité entre 0 et 1 que le coup soit réussi.
+
+    Raises:
+        Exception: Si le modèle ne parvient pas à prédire.
+    """
+
     try:
         prob = model.predict_proba([[angle, distance]])[0][1]
         logger.debug(f"Probabilité calculée : {prob:.4f}")
@@ -113,6 +175,28 @@ def probabilite_reussite(model, angle, distance):
 
 # ---------- PIPELINE PRINCIPAL ----------
 def coups_joueurs(journee, competition):
+    """
+    Calcule tous les indicateurs xPoints, probabilités, angles et distances
+    pour une journée donnée ou pour l'ensemble d'une compétition.
+
+    Le traitement :
+    - charge les données brutes,
+    - filtre selon compétition/journée,
+    - calcule angle, distance, probabilité,
+    - calcule xPoints,
+    - sauvegarde le fichier final.
+
+    Args:
+        journee (int | None): Journée ciblée, ou None pour toute la compétition.
+        competition (str): Nom de la compétition.
+
+    Produces:
+        CSV `data/coups_joueurs_<competition>_<journee>.csv`
+
+    Raises:
+        FileNotFoundError: Si `repertoire.csv` est manquant.
+    """
+
     logger.info(
         f"Début du traitement pour compétition={competition}, journée={journee}"
     )
@@ -167,6 +251,17 @@ def coups_joueurs(journee, competition):
 
 # ---------- LANCEMENT ----------
 def main():
+    """
+    Point d’entrée principal du script.
+
+    - Récupère les informations utilisateur (compétition, journée)
+    - Exécute le pipeline principal `coups_joueurs`
+    - Logge le début et la fin de l’exécution
+
+    Returns:
+        None
+    """
+
     logger.info("Lancement du script calcul_proba.py")
     competition, journee = get_user_input()
     coups_joueurs(journee, competition)
