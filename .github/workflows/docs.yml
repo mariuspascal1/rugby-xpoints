@@ -20,11 +20,8 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Poetry
-        run: pip install poetry
-
-      - name: Install dependencies
-        run: poetry install
+      - name: Install documentation dependencies
+        run: pip install sphinx
 
       - name: Build documentation
         run: |
