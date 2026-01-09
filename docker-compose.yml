@@ -1,0 +1,31 @@
+
+services:
+  db:
+    image: postgres:16
+    container_name: rugby-db
+    environment:
+      POSTGRES_DB: rugby
+      POSTGRES_USER: rugby_user
+      POSTGRES_PASSWORD: rugby_pass
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./data/db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
+    ports:
+      - "5432:5432"
+
+  xpoints-app:
+    build: .
+    container_name: rugby-xpoints-app
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_NAME: rugby
+      DB_USER: rugby_user
+      DB_PASSWORD: rugby_pass
+    volumes:
+      - .:/app
+    command: poetry run calcul_proba
+
+volumes:
+  db_data:

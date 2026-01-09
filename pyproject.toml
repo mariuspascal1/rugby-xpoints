@@ -15,9 +15,9 @@ matplotlib = ">=3.10.7,<4.0.0"
 numpy = "<2"
 
 [tool.poetry.scripts]
-calcul_proba = "code.calcul_proba:main"
-repertoire = "code.repertoireV3:main"
-stats_joueurs = "code.stats_joueurs:main"
+calcul_proba = "rugby_xpoints.calcul_proba:main"
+repertoire = "rugby_xpoints.repertoireV3:main"
+stats_joueurs = "rugby_xpoints.stats_joueurs:main"
 
 [tool.poetry.urls]
 repository = "https://github.com/mariuspascal1/rugby-xpoints"
